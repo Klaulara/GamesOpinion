@@ -1,18 +1,44 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1 class="container text-start mt-5">Lista de juegos disponibles</h1>
+    <div class="container d-flex flex-wrap">
+      <div class="m-2 p-2" v-for="game in games" :key="game.name">
+        <CardComponent
+          :title="game.name"
+          :image="game.background_image"
+          :rating="game.rating"
+          :released="game.released"
+          :update="game.updated"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import CardComponent from "@/components/CardComponent.vue";
+
+const API_KEY = "b686700b4f174c728ffe389c52195dc6";
 
 export default {
-  name: 'HomeView',
+  name: "HomeView",
   components: {
-    HelloWorld
-  }
-}
+    CardComponent,
+  },
+  data() {
+    return {
+      games: [],
+    };
+  },
+  methods: {
+    async getGames() {
+      await fetch(`https://api.rawg.io/api/games?key=${API_KEY}`)
+        .then((response) => response.json())
+        .then((data) => (this.games = data.results))
+    },
+  },
+  mounted() {
+    this.getGames();
+  },
+};
 </script>
